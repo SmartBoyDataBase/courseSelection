@@ -17,7 +17,8 @@ func Create(CourseSelection CourseSelection) (CourseSelection, error) {
 	INSERT INTO CourseSelection(student_id, teachcourse_id, regular_grade, exam_grade, final_grade)
 	VALUES ($1, $2, $3, $4, $5);`,
 		CourseSelection.StudentId, CourseSelection.TeachCourseId,
-		CourseSelection.RegularGrade, CourseSelection.ExamGrade, CourseSelection.FinalGrade)
+		CourseSelection.RegularGrade, CourseSelection.ExamGrade,
+		CourseSelection.FinalGrade)
 	return CourseSelection, err
 }
 
@@ -32,7 +33,11 @@ func All() ([]CourseSelection, error) {
 	var CourseSelections []CourseSelection
 	for rows.Next() {
 		var CourseSelection CourseSelection
-		err := rows.Scan(&CourseSelection.StudentId, &CourseSelection.TeachCourseId, &CourseSelection.RegularGrade, &CourseSelection.ExamGrade, CourseSelection.FinalGrade)
+		err := rows.Scan(&CourseSelection.StudentId,
+			&CourseSelection.TeachCourseId,
+			&CourseSelection.RegularGrade,
+			&CourseSelection.ExamGrade,
+			&CourseSelection.FinalGrade)
 		if err != nil {
 			return CourseSelections, err
 		}
