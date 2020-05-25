@@ -7,9 +7,9 @@ import (
 type CourseSelection struct {
 	StudentId     uint64 `json:"student_id"`
 	TeachCourseId uint64 `json:"teach_course_id"`
-	RegularGrade  *uint8 `json:"regular_grade"`
-	ExamGrade     *uint8 `json:"exam_grade"`
-	FinalGrade    *uint8 `json:"final_grade"`
+	RegularGrade  *uint8 `json:"regular_grade,omitempty"`
+	ExamGrade     *uint8 `json:"exam_grade,omitempty"`
+	FinalGrade    *uint8 `json:"final_grade,omitempty"`
 }
 
 func Create(CourseSelection CourseSelection) (CourseSelection, error) {
