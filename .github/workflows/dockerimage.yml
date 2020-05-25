@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v1
       - name: Build the Docker image
         run: |
-          docker build . -t course-selection
-          docker tag course-selection ${{ secrets.DOCKER_USERNAME }}/course-selection:${GITHUB_SHA}
+          docker build . -t sbdb-course-selection
+          docker tag sbdb-course-selection ${{ secrets.DOCKER_USERNAME }}/sbdb-course-selection:${GITHUB_SHA}
           echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
-          docker push ${{ secrets.DOCKER_USERNAME }}/course-selection
+          docker push ${{ secrets.DOCKER_USERNAME }}/sbdb-course-selection
