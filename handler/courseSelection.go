@@ -78,9 +78,17 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func AllHandler(w http.ResponseWriter, _ *http.Request) {
+func AllHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
-	all, err := model.All()
+	var all []model.CourseSelection
+	var err error
+	teachcourseIdStr := r.URL.Query().Get("teachcourse_id")
+	if teachcourseIdStr != "" {
+		teachcourseId, _ := strconv.ParseUint(teachcourseIdStr, 10, 64)
+		all, err = model.FetchByTeachCourseId(teachcourseId)
+	} else {
+		all, err = model.All()
+	}
 	if err != nil {
 		log.Println(err)
 		w.WriteHeader(http.StatusInternalServerError)

@@ -45,3 +45,28 @@ func All() ([]CourseSelection, error) {
 	}
 	return CourseSelections, nil
 }
+
+func FetchByTeachCourseId(id uint64) ([]CourseSelection, error) {
+	rows, err := infrastructure.DB.Query(`
+	SELECT student_id, teachcourse_id, regular_grade, exam_grade, final_grade
+	FROM CourseSelection
+	WHERE teachcourse_id=$1;
+	`, id)
+	if err != nil {
+		return nil, err
+	}
+	var CourseSelections []CourseSelection
+	for rows.Next() {
+		var CourseSelection CourseSelection
+		err := rows.Scan(&CourseSelection.StudentId,
+			&CourseSelection.TeachCourseId,
+			&CourseSelection.RegularGrade,
+			&CourseSelection.ExamGrade,
+			&CourseSelection.FinalGrade)
+		if err != nil {
+			return CourseSelections, err
+		}
+		CourseSelections = append(CourseSelections, CourseSelection)
+	}
+	return CourseSelections, nil
+}
