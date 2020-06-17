@@ -28,6 +28,24 @@ func postHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(response)
 }
 
+func putHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	body, _ := ioutil.ReadAll(r.Body)
+	var toCreate model.CourseSelection
+	_ = json.Unmarshal(body, &toCreate)
+	result, err := model.Put(toCreate)
+	if err != nil {
+		log.Println("Update courseSelection failed")
+		_, _ = w.Write([]byte(err.Error()))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	} else {
+		log.Println("CourseSelection ", result.TeachCourseId, ',', result.StudentId, " updated")
+	}
+	response, err := json.Marshal(result)
+	_, _ = w.Write(response)
+}
+
 func getHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Add("Content-Type", "application/json")
 	teachCourseIdStr := r.URL.Query().Get("teach_course_id")
@@ -75,6 +93,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		getHandler(w, r)
 	case "POST":
 		postHandler(w, r)
+	case "PUT":
+		putHandler(w, r)
 	}
 }
 
@@ -102,4 +122,18 @@ func AllHandler(w http.ResponseWriter, r *http.Request) {
 		body = []byte("[]")
 	}
 	_, _ = w.Write(body)
+}
+
+func GiveFinalGradeWithRatioHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	var payload struct {
+		TeachcourseId     uint64 `json:"teachcourse_id"`
+		RegularPercentage uint   `json:"regular_percentage"`
+		ExamPercentage    uint   `json:"exam_percentage"`
+	}
+	body, _ := ioutil.ReadAll(r.Body)
+	_ = json.Unmarshal(body, &payload)
+	_, _ = infrastructure.DB.Exec(`
+	SELECT give_final_grade_with_ratio($1, $2, $3);
+	`, payload.TeachcourseId, payload.RegularPercentage, payload.ExamPercentage)
 }

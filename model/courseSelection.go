@@ -22,6 +22,17 @@ func Create(CourseSelection CourseSelection) (CourseSelection, error) {
 	return CourseSelection, err
 }
 
+func Put(selection CourseSelection) (CourseSelection, error) {
+	_, err := infrastructure.DB.Exec(`
+	UPDATE courseselection
+	SET regular_grade=$3,
+		exam_grade=$4,
+		final_grade=$5
+	WHERE teachcourse_id=$1 AND student_id=$2;
+	`, selection.TeachCourseId, selection.StudentId, selection.RegularGrade, selection.ExamGrade, selection.FinalGrade)
+	return selection, err
+}
+
 func All() ([]CourseSelection, error) {
 	rows, err := infrastructure.DB.Query(`
 	SELECT student_id, teachcourse_id, regular_grade, exam_grade, final_grade
