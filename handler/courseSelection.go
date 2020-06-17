@@ -133,7 +133,14 @@ func GiveFinalGradeWithRatioHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	body, _ := ioutil.ReadAll(r.Body)
 	_ = json.Unmarshal(body, &payload)
-	_, _ = infrastructure.DB.Exec(`
+	_, err := infrastructure.DB.Exec(`
 	SELECT give_final_grade_with_ratio($1, $2, $3);
 	`, payload.TeachcourseId, payload.RegularPercentage, payload.ExamPercentage)
+	if err != nil {
+		log.Println(err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		_, _ = w.Write([]byte(err.Error()))
+	} else {
+		w.WriteHeader(http.StatusOK)
+	}
 }
