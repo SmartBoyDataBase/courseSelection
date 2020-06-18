@@ -98,10 +98,15 @@ func deleteHandler(w http.ResponseWriter, r *http.Request) {
 		_, _ = w.Write([]byte(err.Error()))
 		return
 	}
-	infrastructure.DB.Query(`
+	_, err = infrastructure.DB.Query(`
 	DELETE FROM courseselection
 	WHERE teachcourse_id=$1 AND student_id=$2;
 	`, teachCourseId, studentId)
+	if err != nil {
+		log.Println(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(err.Error()))
+	}
 }
 
 func Handler(w http.ResponseWriter, r *http.Request) {
