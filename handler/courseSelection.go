@@ -117,6 +117,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		postHandler(w, r)
 	case "PUT":
 		putHandler(w, r)
+	case "DELETE":
+		deleteHandler(w, r)
 	}
 }
 
