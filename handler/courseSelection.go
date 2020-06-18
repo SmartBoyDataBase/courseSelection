@@ -165,6 +165,7 @@ func GiveFinalGradeWithRatioHandler(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusInternalServerError)
 		_, _ = w.Write([]byte(err.Error()))
 	} else {
+		log.Println("give_final_grade_with_ratio", payload)
 		w.WriteHeader(http.StatusOK)
 	}
 }
