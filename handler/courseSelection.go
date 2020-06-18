@@ -87,6 +87,23 @@ func getHandler(w http.ResponseWriter, r *http.Request) {
 	_, _ = w.Write(body)
 }
 
+func deleteHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Add("Content-Type", "application/json")
+	teachCourseIdStr := r.URL.Query().Get("teach_course_id")
+	teachCourseId, err := strconv.ParseUint(teachCourseIdStr, 10, 64)
+	studentIdStr := r.URL.Query().Get("student_id")
+	studentId, err := strconv.ParseUint(studentIdStr, 10, 64)
+	if err != nil {
+		w.WriteHeader(http.StatusPaymentRequired)
+		_, _ = w.Write([]byte(err.Error()))
+		return
+	}
+	infrastructure.DB.Query(`
+	DELETE FROM courseselection
+	WHERE teachcourse_id=$1 AND student_id=$2;
+	`, teachCourseId, studentId)
+}
+
 func Handler(w http.ResponseWriter, r *http.Request) {
 	switch r.Method {
 	case "GET":
